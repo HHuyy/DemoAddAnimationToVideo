@@ -102,7 +102,7 @@ class VideoEditor {
     
     guard let export = AVAssetExportSession(
       asset: composition,
-      presetName: AVAssetExportPresetHighestQuality) //AVAssetExportPresetPassthrough
+      presetName: AVAssetExportPresetPassthrough ) //AVAssetExportPresetHighestQuality
       else {
         print("Cannot create export session.")
         onComplete(nil)
