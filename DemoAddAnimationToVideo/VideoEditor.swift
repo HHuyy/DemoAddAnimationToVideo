@@ -61,19 +61,21 @@ class VideoEditor {
     let overlayLayer = CALayer()
     overlayLayer.frame = CGRect(origin: .zero, size: videoSize)
     
-    backgroundLayer.backgroundColor = UIColor(named: "rw-green")?.cgColor
-    videoLayer.frame = CGRect(
-      x: 20,
-      y: 20,
-      width: videoSize.width - 40,
-      height: videoSize.height - 40)
-    backgroundLayer.contents = UIImage(named: "background")?.cgImage
-    backgroundLayer.contentsGravity = .resizeAspectFill
+//    backgroundLayer.backgroundColor = UIColor(named: "rw-green")?.cgColor
+//    videoLayer.frame = CGRect(
+//      x: 20,
+//      y: 20,
+//      width: videoSize.width - 40,
+//      height: videoSize.height - 40)
+//    backgroundLayer.contents = UIImage(named: "background")?.cgImage
+//    backgroundLayer.contentsGravity = .resizeAspectFill
     
     addImage(to: overlayLayer, videoSize: videoSize)
     
+//    addConfetti(to: overlayLayer)
+    
     add(
-    text: "Happy Birthday,\n\(name)",
+    text: "Happy Birthday, /n\(name)",
     to: overlayLayer,
     videoSize: videoSize)
     
@@ -102,7 +104,7 @@ class VideoEditor {
     
     guard let export = AVAssetExportSession(
       asset: composition,
-      presetName: AVAssetExportPresetPassthrough ) //AVAssetExportPresetHighestQuality
+      presetName: AVAssetExportPresetHighestQuality ) //AVAssetExportPresetHighestQuality
       else {
         print("Cannot create export session.")
         onComplete(nil)
@@ -156,6 +158,7 @@ class VideoEditor {
       .foregroundColor: UIColor(named: "rw-green")!,
       .strokeColor: UIColor.white,
       .strokeWidth: -3])
+    let mainY = videoSize.height * 0.66
     
     let textLayer = CATextLayer()
     textLayer.string = attributedText
@@ -166,23 +169,111 @@ class VideoEditor {
     
     textLayer.frame = CGRect(
       x: 0,
-      y: videoSize.height * 0.66,
-      width: videoSize.width,
+      y: mainY,
+        width: videoSize.width,
       height: 150)
     textLayer.displayIfNeeded()
     
-    let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
-    scaleAnimation.fromValue = 0.8
-    scaleAnimation.toValue = 1.2
-    scaleAnimation.duration = 0.5
-    scaleAnimation.repeatCount = .greatestFiniteMagnitude
-    scaleAnimation.autoreverses = true
-    scaleAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-    scaleAnimation.beginTime = AVCoreAnimationBeginTimeAtZero
-    scaleAnimation.isRemovedOnCompletion = false
-    textLayer.add(scaleAnimation, forKey: "scale")
+    let gradient = CAGradientLayer()
+    let cor1 = UIColor.clear.cgColor
+    let cor2 = UIColor.black.cgColor
+    gradient.type = .axial
+    gradient.colors = [cor1, cor2, cor2]
+    gradient.startPoint = CGPoint(x: 0, y: 1)
+    gradient.endPoint = CGPoint(x: 0.1, y: 1)
+    gradient.frame = CGRect(
+        x: textLayer.frame.origin.x,
+          y: mainY,
+          width: videoSize.width * 1.4,
+          height: 150)
+    gradient.displayIfNeeded()
     
+    let textAnimation = CABasicAnimation(keyPath: "position")
+    textAnimation.fromValue = [attributedText.width(containerHeight: 200)/2, mainY + attributedText.height(containerWidth: videoSize.width)]
+    textAnimation.toValue = [attributedText.width(containerHeight: 200)*2, mainY + attributedText.height(containerWidth: videoSize.width)]
+    textAnimation.duration = 6
+//    scaleAnimation.repeatCount = 0
+    textAnimation.autoreverses = true
+    textAnimation.timingFunction = CAMediaTimingFunction(name: .default)
+    textAnimation.beginTime = AVCoreAnimationBeginTimeAtZero + 0.25
+    textAnimation.isRemovedOnCompletion = false
+    gradient.add(textAnimation, forKey: "position1")
+    
+    let crewIconLayer = CALayer()
+    let myImage = UIImage(named: "red-crew-icon")?.cgImage
+//    let imageWidth = attributedText.height(containerWidth: 200)
+    let w = myImage?.width
+    let h = myImage?.height
+    crewIconLayer.frame = CGRect(
+        x: 0,
+        y: Int(mainY),
+        width: Int(Double(w!) * 1.1),
+        height: Int(Double(h!) * 1.1) )
+    crewIconLayer.contents = myImage
+    
+    let crewMoveAnimation = CABasicAnimation(keyPath: "position")
+    crewMoveAnimation.fromValue = [ -crewIconLayer.frame.width, mainY + attributedText.height(containerWidth: videoSize.width)]
+    crewMoveAnimation.toValue = [attributedText.width(containerHeight: 200)*2, mainY + attributedText.height(containerWidth: videoSize.width)]
+    crewMoveAnimation.duration = 8
+    crewMoveAnimation.autoreverses = true
+    crewMoveAnimation.timingFunction = CAMediaTimingFunction(name: .default)
+    crewMoveAnimation.beginTime = AVCoreAnimationBeginTimeAtZero
+    crewMoveAnimation.isRemovedOnCompletion = false
+    
+    let crewRotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
+    //clockwise
+    crewRotationAnimation.toValue = NSNumber(value: -(Double.pi * 2))
+    //anticlockwise
+//    crewRotationAnimation.toValue = NSNumber(value: Double.pi * 2)
+    crewRotationAnimation.isRemovedOnCompletion = false
+    
+    let groupAnimation = CAAnimationGroup()
+    groupAnimation.beginTime = AVCoreAnimationBeginTimeAtZero
+    groupAnimation.duration = 5
+    groupAnimation.animations = [crewRotationAnimation, crewMoveAnimation]
+    crewIconLayer.add(groupAnimation, forKey: "groupAnimation")
+//    crewIconLayer.contentsGravity = CALayerContentsGravity.left
+//    crewIconLayer.isGeometryFlipped = true
+
+    
+//    let scaleAnimation = CABasicAnimation(keyPath: "opacity")
+//    scaleAnimation.beginTime = AVCoreAnimationBeginTimeAtZero
+//    scaleAnimation.duration = 3.0
+//    scaleAnimation.fromValue = 0
+//    scaleAnimation.toValue = textLayer.bounds.size.width
+// //    scaleAnimation.fillMode =
+//    scaleAnimation.isRemovedOnCompletion = false
+//    textLayer.add(scaleAnimation, forKey: "scale")
+    
+    
+    let containerView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 375.0, height: 667.0))
+//    XCPShowView("Container View", view: containerView)
+
+    let rectangle = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 50.0, height: 50.0))
+    rectangle.center = containerView.center
+    rectangle.layer.cornerRadius = 5.0
+
+
+    let tf:UITextField = UITextField(frame: containerView.bounds)
+    tf.textColor = UIColor.white
+    tf.text = "this is text"
+    tf.textAlignment = NSTextAlignment.center;
+
+    let gradientMaskLayer:CAGradientLayer = CAGradientLayer()
+    gradientMaskLayer.frame = containerView.bounds
+    gradientMaskLayer.colors = [UIColor.clear.cgColor, UIColor.red.cgColor, UIColor.red.cgColor, UIColor.clear.cgColor ]
+    gradientMaskLayer.startPoint = CGPoint(x: 0.1, y: 0.0)
+    gradientMaskLayer.endPoint = CGPoint(x: 0.55, y: 0.0)
+
+    containerView.addSubview(tf)
+
+//    tf.layer.mask = gradientMaskLayer
+    
+//    layer.mask = gradientMaskLayer
     layer.addSublayer(textLayer)
+    layer.addSublayer(gradient)
+    layer.addSublayer(crewIconLayer)
+//    layer.insertSublayer(gradientMaskLayer, at: 0)
   }
   
   private func orientation(from transform: CGAffineTransform) -> (orientation: UIImage.Orientation, isPortrait: Bool) {
@@ -239,4 +330,23 @@ class VideoEditor {
     
     layer.addSublayer(emitter)
   }
+}
+
+extension NSAttributedString {
+
+    func height(containerWidth: CGFloat) -> CGFloat {
+
+        let rect = self.boundingRect(with: CGSize.init(width: containerWidth, height: CGFloat.greatestFiniteMagnitude),
+                                     options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                     context: nil)
+        return ceil(rect.size.height)
+    }
+
+    func width(containerHeight: CGFloat) -> CGFloat {
+
+        let rect = self.boundingRect(with: CGSize.init(width: CGFloat.greatestFiniteMagnitude, height: containerHeight),
+                                     options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                     context: nil)
+        return ceil(rect.size.width)
+    }
 }

@@ -65,8 +65,8 @@
 				FC83B87C2546CCB300611961 /* AppDelegate.swift */,
 				FC83B87E2546CCB300611961 /* SceneDelegate.swift */,
 				FC83B8802546CCB400611961 /* ViewController.swift */,
-				FC83B8902546CCDA00611961 /* Main.storyboard */,
 				FC83B8922546CD1700611961 /* PickerViewController.swift */,
+				FC83B8902546CCDA00611961 /* Main.storyboard */,
 				FC83B8932546CD1700611961 /* PlayerViewController.swift */,
 				FC83B8942546CD1700611961 /* VideoEditor.swift */,
 				FC83B8852546CCB700611961 /* Assets.xcassets */,
@@ -289,6 +289,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RN7Y92Z642;
 				INFOPLIST_FILE = DemoAddAnimationToVideo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -306,6 +307,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RN7Y92Z642;
 				INFOPLIST_FILE = DemoAddAnimationToVideo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
